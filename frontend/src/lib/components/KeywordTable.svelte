@@ -51,8 +51,8 @@
     </div>
   </div>
 
-  <div class="overflow-x-auto rounded-container">
-    <table class="table table-hover">
+  <div class="table-wrap">
+    <table class="table caption-bottom">
       <thead>
         <tr>
           <th class="w-10"></th>
@@ -61,7 +61,7 @@
           {/each}
         </tr>
       </thead>
-      <tbody>
+      <tbody class="[&>tr]:hover:preset-tonal-primary">
         {#each data.rows as row, i}
           <tr class={checked[i] ? '' : 'opacity-50'}>
             <td>

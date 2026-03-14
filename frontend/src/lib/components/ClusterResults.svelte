@@ -16,8 +16,8 @@
 <div class="space-y-4">
   <h2 class="h3">Clustering Complete</h2>
 
-  <div class="overflow-x-auto rounded-container">
-    <table class="table table-hover">
+  <div class="table-wrap">
+    <table class="table caption-bottom">
       <thead>
         <tr>
           {#each data.header as header}
@@ -25,7 +25,7 @@
           {/each}
         </tr>
       </thead>
-      <tbody>
+      <tbody class="[&>tr]:hover:preset-tonal-primary">
         {#each data.content as row}
           <tr>
             {#each row as cell}
