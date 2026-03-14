@@ -10,8 +10,8 @@ export function GetEvaluationStatus(arg1) {
   return window['go']['keywords']['KeywordsCommand']['GetEvaluationStatus'](arg1);
 }
 
-export function Setup(arg1, arg2, arg3) {
-  return window['go']['keywords']['KeywordsCommand']['Setup'](arg1, arg2, arg3);
+export function Setup(arg1, arg2, arg3, arg4) {
+  return window['go']['keywords']['KeywordsCommand']['Setup'](arg1, arg2, arg3, arg4);
 }
 
 export function StartClustering(arg1) {

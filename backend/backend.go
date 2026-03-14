@@ -40,7 +40,7 @@ func (b *Backend) Setup(ctx context.Context) error {
 	jobMgr := jobs.NewManager()
 	jobMgr.StartCleanup(10*time.Minute, 30*time.Minute)
 
-	b.Keywords.Setup(jobMgr, geminiClient, geminiClient)
+	b.Keywords.Setup(ctx, jobMgr, geminiClient, geminiClient)
 	b.Upload.Setup(ctx)
 
 	slog.Info("Backend ready")

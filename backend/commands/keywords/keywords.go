@@ -1,6 +1,7 @@
 package keywords
 
 import (
+	"context"
 	"fmt"
 	"path/filepath"
 
@@ -11,12 +12,14 @@ import (
 )
 
 type KeywordsCommand struct {
+	Ctx       context.Context
 	jobMgr    *jobs.Manager
 	evaluator ai.KeywordEvaluator
 	organizer ai.KeywordOrganizer
 }
 
-func (k *KeywordsCommand) Setup(mgr *jobs.Manager, evaluator ai.KeywordEvaluator, organizer ai.KeywordOrganizer) {
+func (k *KeywordsCommand) Setup(ctx context.Context, mgr *jobs.Manager, evaluator ai.KeywordEvaluator, organizer ai.KeywordOrganizer) {
+	k.Ctx = ctx
 	k.jobMgr = mgr
 	k.evaluator = evaluator
 	k.organizer = organizer
@@ -64,6 +67,7 @@ func (k *KeywordsCommand) StartEvaluation(params EvaluationParams) (JobRef, erro
 	jobID := k.jobMgr.CreateJob()
 
 	go processor.ProcessKeywords(processor.KeywordProcessParams{
+		Ctx:                k.Ctx,
 		JobID:              jobID,
 		Source:             &source.CSVFileSource{Path: filepath.Join("tmp", params.Filename)},
 		CampaignDesc:       params.CampaignDesc,
@@ -125,6 +129,7 @@ func (k *KeywordsCommand) StartClustering(params ClusterParams) (JobRef, error) 
 	jobID := k.jobMgr.CreateJob()
 
 	go processor.ProcessClustering(processor.ClusterProcessParams{
+		Ctx:          k.Ctx,
 		JobID:        jobID,
 		Headers:      payload.Header,
 		Rows:         selectedRows,

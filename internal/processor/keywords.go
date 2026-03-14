@@ -11,6 +11,7 @@ import (
 )
 
 type KeywordProcessParams struct {
+	Ctx                context.Context
 	JobID              string
 	Source             source.KeywordSource
 	ExcludeKeywords    []string
@@ -57,7 +58,7 @@ func ProcessKeywords(params KeywordProcessParams) {
 		pipeline.NewDropIfEmpty(0),
 		pipeline.NewDeduplicate(0),
 		pipeline.NewExcludeRows(params.ExcludeKeywords, 0),
-		aiValidationStep{Evaluator: params.Evaluator, Description: params.CampaignDesc, CustomInstructions: params.CustomInstructions},
+		aiValidationStep{Ctx: params.Ctx, Evaluator: params.Evaluator, Description: params.CampaignDesc, CustomInstructions: params.CustomInstructions},
 	}
 
 	if err = pipeline.Run(ctx, steps); err != nil {
@@ -79,6 +80,7 @@ func ProcessKeywords(params KeywordProcessParams) {
 // --- Pipeline Steps ---
 
 type aiValidationStep struct {
+	Ctx                context.Context
 	Evaluator          ai.KeywordEvaluator
 	Description        string
 	CustomInstructions string
@@ -89,7 +91,7 @@ func (s aiValidationStep) Run(ctx *pipeline.Context) error {
 	if s.CustomInstructions != "" {
 		desc += "\n\nFor this specific evaluation, also consider: " + s.CustomInstructions
 	}
-	newHeaders, newRows, err := SendToAIForValidation(s.Evaluator, ctx.Headers, desc, ctx.Rows)
+	newHeaders, newRows, err := SendToAIForValidation(s.Ctx, s.Evaluator, ctx.Headers, desc, ctx.Rows)
 	if err != nil {
 		return err
 	}
@@ -114,8 +116,8 @@ func DropUnwantedColumns(keywords [][]string) [][]string {
 	return keywords
 }
 
-func SendToAIForValidation(aiClient ai.KeywordEvaluator, headers []string, description string, keywords [][]string) ([]string, [][]string, error) {
-	newHeaders, newRows, err := aiClient.EvaluateKeywords(context.Background(), description, headers, keywords)
+func SendToAIForValidation(ctx context.Context, aiClient ai.KeywordEvaluator, headers []string, description string, keywords [][]string) ([]string, [][]string, error) {
+	newHeaders, newRows, err := aiClient.EvaluateKeywords(ctx, description, headers, keywords)
 	if err != nil {
 		return nil, nil, err
 	}

@@ -8,6 +8,7 @@ import (
 )
 
 type ClusterProcessParams struct {
+	Ctx          context.Context
 	JobID        string
 	Headers      []string
 	Rows         [][]string
@@ -18,7 +19,7 @@ type ClusterProcessParams struct {
 
 func ProcessClustering(params ClusterProcessParams) {
 	newHeaders, newRows, err := params.Organizer.OrganizeKeywords(
-		context.Background(), "", params.Headers, params.Rows,
+		params.Ctx, "", params.Headers, params.Rows,
 	)
 	if err != nil {
 		params.Manager.FailJob(params.JobID, err.Error())
