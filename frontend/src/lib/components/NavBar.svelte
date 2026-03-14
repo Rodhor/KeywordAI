@@ -1,13 +1,13 @@
 <script lang="ts">
   import { AppBar } from "@skeletonlabs/skeleton-svelte";
-  import { ArrowLeftIcon } from "@lucide/svelte";
+  import { ArrowLeftIcon, SettingsIcon } from "@lucide/svelte";
   import { page } from "$app/state";
   import LightSwitch from "./LightSwitch.svelte";
   let isHome = $derived(page.url.pathname === "/");
 </script>
 
 <AppBar>
-  <AppBar.Toolbar class="grid-cols-[auto_1fr]">
+  <AppBar.Toolbar class="grid-cols-[auto_1fr_auto]">
     <AppBar.Lead>
       {#if !isHome}
         <a href="/" class="btn-icon hover:preset-tonal" aria-label="Home">
@@ -23,6 +23,9 @@
       >
     </AppBar.Headline>
     <AppBar.Trail>
+      <a href="/settings" class="btn-icon hover:preset-tonal" aria-label="Settings">
+        <SettingsIcon class="size-5" />
+      </a>
       <LightSwitch />
     </AppBar.Trail>
   </AppBar.Toolbar>

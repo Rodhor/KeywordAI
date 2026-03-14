@@ -107,7 +107,7 @@
   <button
     type="button"
     class="btn preset-filled w-full"
-    disabled={!filename}
+    disabled={!filename || !campaignDesc}
     onclick={handleSubmit}
   >
     Evaluate Keywords

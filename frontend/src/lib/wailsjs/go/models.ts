@@ -1,3 +1,22 @@
+export namespace config {
+	
+	export class Config {
+	    GeminiAPIKey: string;
+	    GoogleAuthAPIKey: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Config(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.GeminiAPIKey = source["GeminiAPIKey"];
+	        this.GoogleAuthAPIKey = source["GoogleAuthAPIKey"];
+	    }
+	}
+
+}
+
 export namespace jobs {
 	
 	export class Manager {
@@ -75,6 +94,25 @@ export namespace keywords {
 	        this.status = source["status"];
 	        this.error = source["error"];
 	        this.data = source["data"];
+	    }
+	}
+
+}
+
+export namespace settings {
+	
+	export class Settings {
+	    GeminiAPIKey: string;
+	    GoogleAuthAPIKey: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Settings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.GeminiAPIKey = source["GeminiAPIKey"];
+	        this.GoogleAuthAPIKey = source["GoogleAuthAPIKey"];
 	    }
 	}
 
