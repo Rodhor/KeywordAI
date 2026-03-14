@@ -31,6 +31,8 @@ func (b *Backend) Setup(ctx context.Context) error {
 	initLogger()
 	loadDotEnv()
 
+	b.Upload.Setup(ctx)
+
 	geminiClient, err := ai.NewClient(ctx)
 	if err != nil {
 		slog.Error("Failed to initialise AI client", "error", err)
@@ -41,7 +43,6 @@ func (b *Backend) Setup(ctx context.Context) error {
 	jobMgr.StartCleanup(10*time.Minute, 30*time.Minute)
 
 	b.Keywords.Setup(ctx, jobMgr, geminiClient, geminiClient)
-	b.Upload.Setup(ctx)
 
 	slog.Info("Backend ready")
 	return nil
