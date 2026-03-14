@@ -34,6 +34,7 @@ func main() {
 		// Bind command structs, not the App struct.
 		// Each entry here becomes a separate import namespace in the frontend.
 		Bind: []interface{}{
+			app.Backend.Settings,
 			app.Backend.Keywords,
 			app.Backend.Upload,
 		},

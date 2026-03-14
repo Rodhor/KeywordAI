@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 
 	"google.golang.org/genai"
 )
@@ -16,17 +15,16 @@ type AIResponse struct {
 }
 
 type Client struct {
-	gvClient       *genai.Client
-	model          string
-	config         *genai.GenerateContentConfig
+	gvClient        *genai.Client
+	model           string
+	config          *genai.GenerateContentConfig
 	organizerConfig *genai.GenerateContentConfig
 }
 
-func NewClient(ctx context.Context) (*Client, error) {
-	apiKey := os.Getenv("GEMINI_API_KEY")
+func NewClient(ctx context.Context, ApiKey string) (*Client, error) {
 
 	client, err := genai.NewClient(ctx, &genai.ClientConfig{
-		APIKey:  apiKey,
+		APIKey:  ApiKey,
 		Backend: genai.BackendGeminiAPI,
 	})
 	if err != nil {
