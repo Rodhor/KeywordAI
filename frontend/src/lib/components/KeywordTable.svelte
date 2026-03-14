@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { untrack } from "svelte";
+  import { ClipboardIcon, ClipboardCheckIcon } from "@lucide/svelte";
+
   type EvaluationData = {
     headers: string[];
     rows: string[][];
@@ -15,13 +18,16 @@
     onReset: () => void;
   } = $props();
 
-  // Pre-check rows where the Evaluation column equals "Good"
-  const evalColIndex = data.headers.findIndex((h) => h === 'Evaluation');
+  // Pre-check rows where the Evaluation column equals "Good".
+  // untrack: data is a static snapshot that never changes after mount — initial capture is intentional.
+  const evalColIndex = untrack(() => data.headers.findIndex((h) => h === "Evaluation"));
 
   let checked = $state<boolean[]>(
-    data.rows.map((row) =>
-      evalColIndex >= 0 ? row[evalColIndex]?.trim() === 'Good' : true
-    )
+    untrack(() =>
+      data.rows.map((row) =>
+        evalColIndex >= 0 ? row[evalColIndex]?.trim() === "Good" : true,
+      )
+    ),
   );
 
   function toggleAll(value: boolean) {
@@ -29,24 +35,56 @@
   }
 
   function handleCluster() {
-    const selected = checked
-      .map((c, i) => (c ? i : -1))
-      .filter((i) => i >= 0);
+    const selected = checked.map((c, i) => (c ? i : -1)).filter((i) => i >= 0);
     onCluster(selected);
   }
 
   let selectedCount = $derived(checked.filter(Boolean).length);
+
+  let copied = $state(false);
+
+  function copySelected() {
+    const selectedRows = data.rows.filter((_, i) => checked[i]);
+    const tsv = [data.headers, ...selectedRows]
+      .map((row) => row.join("\t"))
+      .join("\n");
+    navigator.clipboard.writeText(tsv);
+    copied = true;
+    setTimeout(() => (copied = false), 1000);
+  }
 </script>
 
 <div class="space-y-4">
   <div class="flex items-center justify-between">
     <h2 class="h3">Evaluation Results</h2>
     <div class="flex gap-2">
-      <button type="button" class="btn btn-sm preset-outlined" onclick={() => toggleAll(true)}>
+      <button
+        type="button"
+        class="btn btn-sm preset-outlined"
+        onclick={() => toggleAll(true)}
+      >
         Select all
       </button>
-      <button type="button" class="btn btn-sm preset-outlined" onclick={() => toggleAll(false)}>
+      <button
+        type="button"
+        class="btn btn-sm preset-outlined"
+        onclick={() => toggleAll(false)}
+      >
         Deselect all
+      </button>
+      <button
+        type="button"
+        class="btn btn-sm preset-outlined"
+        disabled={selectedCount === 0}
+        onclick={copySelected}
+      >
+        {#if copied}
+          <ClipboardCheckIcon class="size-4" />
+          Copied!
+        {:else}
+          <ClipboardIcon class="size-4" />
+          Copy selected ({selectedCount})
+        {/if}
       </button>
     </div>
   </div>
@@ -63,7 +101,7 @@
       </thead>
       <tbody class="[&>tr]:hover:preset-tonal-primary">
         {#each data.rows as row, i}
-          <tr class={checked[i] ? '' : 'opacity-50'}>
+          <tr class={checked[i] ? "" : "opacity-50"}>
             <td>
               <input
                 type="checkbox"

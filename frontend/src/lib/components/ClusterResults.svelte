@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { ClipboardIcon, ClipboardCheckIcon } from "@lucide/svelte";
+
   type ClusterData = {
     header: string[];
     content: string[][];
@@ -11,10 +13,32 @@
     data: ClusterData;
     onReset: () => void;
   } = $props();
+
+  let copied = $state(false);
+
+  function copyAll() {
+    const tsv = [data.header, ...data.content]
+      .map((row) => row.join("\t"))
+      .join("\n");
+    navigator.clipboard.writeText(tsv);
+    copied = true;
+    setTimeout(() => (copied = false), 1001);
+  }
 </script>
 
 <div class="space-y-4">
-  <h2 class="h3">Clustering Complete</h2>
+  <div class="flex items-center justify-between">
+    <h2 class="h3">Clustering Complete</h2>
+    <button type="button" class="btn btn-sm preset-outlined" onclick={copyAll}>
+      {#if copied}
+        <ClipboardCheckIcon class="size-4" />
+        Copied!
+      {:else}
+        <ClipboardIcon class="size-4" />
+        Copy table
+      {/if}
+    </button>
+  </div>
 
   <div class="table-wrap">
     <table class="table caption-bottom">
