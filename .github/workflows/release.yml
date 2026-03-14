@@ -60,15 +60,23 @@ jobs:
       - name: Build
         run: wails build -platform ${{ matrix.platform }}
 
-      - name: Zip artifact (Unix)
+      - name: Archive artifact (Unix)
         if: runner.os != 'Windows'
-        run: zip -r ${{ matrix.artifact }}.zip build/bin/
+        run: tar -czf ${{ matrix.artifact }}.tar.gz -C build/bin .
 
-      - name: Zip artifact (Windows)
+      - name: Archive artifact (Windows)
         if: runner.os == 'Windows'
         run: Compress-Archive -Path build/bin/* -DestinationPath ${{ matrix.artifact }}.zip
 
-      - name: Upload artifact
+      - name: Upload artifact (Unix)
+        if: runner.os != 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.artifact }}.tar.gz
+
+      - name: Upload artifact (Windows)
+        if: runner.os == 'Windows'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
